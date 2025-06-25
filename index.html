@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Reconstituez le Cartouche</title>
+  <style>
+    body { background: #f4e7c5; font-family: Papyrus, serif; text-align: center; padding: 2em; }
+    h1 { font-size: 2em; margin-bottom: 1em; }
+    .symbols { display: flex; justify-content: center; flex-wrap: wrap; gap: 1em; margin-bottom: 1em; }
+    .symbol { width: 80px; height: 80px; border: 2px solid #000; background-size: contain; background-position: center; background-repeat: no-repeat; cursor: grab; }
+    #cartouche { display: flex; justify-content: center; gap: 1em; margin: 1em auto; padding: 1em; border: 3px solid #000; border-radius: 25px; background: #e0d6b4; }
+    #result { font-size: 1.5em; margin-top: 1em; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+  <h1>🔍 Reconstituez le Cartouche</h1>
+
+  <div class="symbols" id="symbol-bank">
+    <div class="symbol" draggable="true" data-id="sun" style="background-image: url('img/RA.png')"></div>
+    <div class="symbol" draggable="true" data-id="face" style="background-image: url('img/face.png')"></div>
+    <div class="symbol" draggable="true" data-id="mouth" style="background-image: url('img/mouth.png')"></div>
+    <div class="symbol" draggable="true" data-id="wave" style="background-image: url('img/wave.png')"></div>
+    <div class="symbol" draggable="true" data-id="eye" style="background-image: url('img/eye.png')"></div>
+    <div class="symbol" draggable="true" data-id="serpent" style="background-image: url('img/snake.png')"></div>
+    <div class="symbol" draggable="true" data-id="bird" style="background-image: url('img/aigle.png')"></div>
+    <div class="symbol" draggable="true" data-id="gardien" style="background-image: url('img/gardien.png')"></div>
+    <div class="symbol" draggable="true" data-id="woman" style="background-image: url('img/woman.png')"></div>
+    <div class="symbol" draggable="true" data-id="standing" style="background-image: url('img/standing.png')"></div>
+  </div>
+
+  <div id="cartouche" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+
+  <button onclick="checkSolution()">🔐 Vérifier</button>
+  <button onclick="resetCartouche()">♻️ Réinitialiser</button>
+  <p id="result"></p>
+
+<script>
+  function allowDrop(ev) {
+    ev.preventDefault();
+  }
+
+  const symbolBank = document.getElementById('symbol-bank');
+  const cartouche = document.getElementById('cartouche');
+
+  // Handle drag events (desktop)
+  document.querySelectorAll('.symbol').forEach(s => {
+    s.addEventListener('dragstart', ev => {
+      ev.dataTransfer.setData("text", ev.target.outerHTML);
+    });
+  });
+
+  // Handle drop (desktop)
+  function drop(ev) {
+    ev.preventDefault();
+    if (ev.target.classList.contains('symbol')) return;
+    const data = ev.dataTransfer.getData("text");
+    const tmp = document.createElement('div');
+    tmp.innerHTML = data;
+    const newSym = tmp.firstChild;
+    newSym.setAttribute('draggable', 'false');
+    ev.target.appendChild(newSym);
+  }
+
+  // --- Touch Support for Mobile ---
+  let draggedSymbol = null;
+
+  function handleTouchStart(ev) {
+    if (ev.target.classList.contains('symbol')) {
+      draggedSymbol = ev.target.cloneNode(true);
+      draggedSymbol.setAttribute('draggable', 'false');
+      draggedSymbol.style.opacity = '0.6';
+    }
+  }
+
+  function handleTouchMove(ev) {
+    if (!draggedSymbol) return;
+    ev.preventDefault();
+    draggedSymbol.style.position = 'absolute';
+    draggedSymbol.style.left = ev.touches[0].pageX - 40 + 'px';
+    draggedSymbol.style.top = ev.touches[0].pageY - 40 + 'px';
+    draggedSymbol.style.pointerEvents = 'none';
+    document.body.appendChild(draggedSymbol);
+  }
+
+  function handleTouchEnd(ev) {
+    if (!draggedSymbol) return;
+    const touch = ev.changedTouches[0];
+    const dropTarget = document.elementFromPoint(touch.clientX, touch.clientY);
+    if (dropTarget && dropTarget.id === 'cartouche') {
+      cartouche.appendChild(draggedSymbol);
+	  vibrate(80); // feedback when item is dropped successfully
+    } else {
+      draggedSymbol.remove(); // if not dropped in cartouche
+    }
+    draggedSymbol.style.position = '';
+    draggedSymbol.style.opacity = '1';
+    draggedSymbol = null;
+  }
+
+  // Add touch listeners
+  symbolBank.addEventListener('touchstart', handleTouchStart, { passive: false });
+  symbolBank.addEventListener('touchmove', handleTouchMove, { passive: false });
+  symbolBank.addEventListener('touchend', handleTouchEnd);
+
+ function checkSolution() {
+  const ids = Array.from(document.querySelectorAll('#cartouche .symbol')).map(s => s.dataset.id);
+  const ok = ids.join(',') === 'sun,mouth,woman,woman,face';
+  const r = document.getElementById('result');
+  if (ok) {
+    r.textContent = "✅ Bravo ! Cartouche restauré !";
+    r.style.color = 'green';
+    vibrate(150); // success vibration
+    setTimeout(() => window.location.href = 'indice.html', 2000);
+  } else {
+    r.textContent = "❌ Mauvaise combinaison, réessaie.";
+    r.style.color = 'red';
+    vibrate([100, 50, 100]); // error vibration pattern
+  }
+ }
+  function resetCartouche() {
+   document.getElementById('cartouche').innerHTML = '';
+   document.getElementById('result').textContent = '';
+  }
+
+  function vibrate(ms = 100) {
+	if (navigator.vibrate) navigator.vibrate(ms);
+  }
+  
+</script>
+
+</body>
+</html>

@@ -18,7 +18,7 @@
       margin-bottom: 1em;
     }
 
-    img {
+    img.main-img {
       max-width: 90%;
       height: auto;
       border: 4px solid #000;
@@ -31,28 +31,55 @@
       background-color: #f7e9a0;
       padding: 1em;
       border: 2px dashed #222;
-      display: inline-block;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       max-width: 90%;
       box-sizing: border-box;
+      gap: 1em;
+    }
+
+    /* Conteneur pour disposer l'image et le texte côte à côte sur écrans plus larges */
+    .hint-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5em;
+    }
+
+    .hint-content img.small-img {
+      width: 80px;
+      height: auto;
+      border: 2px solid #000;
     }
 
     @media (min-width: 600px) {
       h1 {
         font-size: 2em;
       }
-
       .hint {
         font-size: 1.4em;
         padding: 1.2em;
+      }
+      /* Disposition en ligne du texte et de la petite image */
+      .hint-content {
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
       }
     }
   </style>
 </head>
 <body>
   <h1>🔍 Nouvel Indice</h1>
-  <img src="img/next_clue.png" alt="Photo de l'indice">
+  <img class="main-img" src="img/next_clue.png" alt="Photo de l'indice">
   <div class="hint">
-    “Là où l’eau danse sous la lumière, tu trouveras ce que tu cherches…”
+    <div class="hint-content">
+      <!-- Texte de l'indice -->
+      <span>“AF est un continent et tu m'as visité plus qu'une fois...”</span>
+      <!-- Petite image à côté du texte -->
+      <img class="small-img" src="img/africa.jpg" alt="Icône supplémentaire">
+    </div>
   </div>
 </body>
 </html>

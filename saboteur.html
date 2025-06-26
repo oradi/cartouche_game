@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Mission Saboteur</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+  <style>
+    body {
+      background-color: #0b0b0b;
+      color: #d1d1d1;
+      font-family: 'Courier New', monospace;
+      text-align: center;
+      padding: 2em;
+    }
+
+    h1 {
+      font-size: 2em;
+      color: #e74c3c;
+      margin-bottom: 1em;
+    }
+
+    .message {
+      background-color: #1c1c1c;
+      border: 2px dashed #e74c3c;
+      padding: 1.5em;
+      margin: 1em auto;
+      max-width: 600px;
+      border-radius: 10px;
+      font-size: 1.1em;
+    }
+
+    .btn {
+      background-color: #e74c3c;
+      color: white;
+      padding: 0.8em 1.5em;
+      font-size: 1em;
+      border: none;
+      border-radius: 8px;
+      margin-top: 2em;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      background-color: #c0392b;
+    }
+
+    .fade-in {
+      animation: fadeIn 1.5s ease-in-out forwards;
+      opacity: 0;
+    }
+
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <h1 class="fade-in">👁️‍🗨️ Bienvenue, Saboteur...</h1>
+
+<div id="choice-container" class="fade-in" style="animation-delay: 0.5s;">
+    <p>Voulez-vous devenir un Saboteur&nbsp;?</p>
+    <button class="btn" onclick="chooseSaboteur(true)">Oui, je deviens Saboteur</button>
+    <button class="btn" onclick="chooseSaboteur(false)">Non, je reste Loyal</button>
+</div>
+
+<div id="saboteur-message" class="message fade-in" style="animation-delay: 1s; display: none;">
+    Votre présence a été détectée.<br>
+    Vous êtes désormais un agent de l’ombre.<br><br>
+    Une seule règle : semez le doute. Ne vous faites pas repérer.<br>
+    Vos instructions vous seront envoyées…<br><br>
+    🔐 Code de mission : <strong>RA-777X</strong>
+</div>
+
+<div id="neutral-message" class="message fade-in" style="animation-delay: 1s; display: none;">
+    Vous avez choisi de rester neutre.<br>
+    Observez attentivement, mais ne vous impliquez pas.<br>
+    Bonne chance&nbsp;!
+</div>
+
+<script>
+    function chooseSaboteur(isSaboteur) {
+        document.getElementById('choice-container').style.display = 'none';
+        if (isSaboteur) {
+            document.getElementById('saboteur-message').style.display = 'block';
+        } else {
+            document.getElementById('neutral-message').style.display = 'block';
+        }
+    }
+</script>
+
+  <button class="btn fade-in" style="animation-delay: 2s;" onclick="retour()">Retour discret</button>
+
+  <script>
+    function retour() {
+      window.location.href = "index.html";
+    }
+
+    // Initialize EmailJS
+    emailjs.init("GlOJZjztDgtTNd7n6");
+
+    // Send the email on page load
+    window.onload = function() {
+      emailjs.send("service_saboteur", "template_xpopeue", {
+        message: "Un utilisateur a accédé à la page saboteur.html"
+      }).then(function(response) {
+        console.log("Email envoyé !", response.status, response.text);
+      }, function(error) {
+        console.error("Erreur lors de l'envoi de l'email:", error);
+      });
+    };
+  </script>
+
+</body>
+</html>

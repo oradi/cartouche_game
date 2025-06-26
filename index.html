@@ -8,7 +8,7 @@
     h1 { font-size: 2em; margin-bottom: 1em; }
     .symbols { display: flex; justify-content: center; flex-wrap: wrap; gap: 1em; margin-bottom: 1em; }
     .symbol { width: 80px; height: 80px; border: 2px solid #000; background-size: contain; background-position: center; background-repeat: no-repeat; cursor: grab; }
-    #cartouche { display: flex; justify-content: center; gap: 1em; margin: 1em auto; padding: 1em; border: 3px solid #000; border-radius: 25px; background: #e0d6b4; }
+    #cartouche { display: flex; justify-content: center; gap: 1em; margin: 1em auto; padding: 1em; border: 3px solid #000; border-radius: 25px; background: #e0d6b4; flex-wrap: wrap; }
     #result { font-size: 1.5em; margin-top: 1em; font-weight: bold; }
   </style>
 </head>
@@ -43,14 +43,12 @@
   const symbolBank = document.getElementById('symbol-bank');
   const cartouche = document.getElementById('cartouche');
 
-  // Handle drag events (desktop)
   document.querySelectorAll('.symbol').forEach(s => {
     s.addEventListener('dragstart', ev => {
       ev.dataTransfer.setData("text", ev.target.outerHTML);
     });
   });
 
-  // Handle drop (desktop)
   function drop(ev) {
     ev.preventDefault();
     if (ev.target.classList.contains('symbol')) return;
@@ -62,7 +60,6 @@
     ev.target.appendChild(newSym);
   }
 
-  // --- Touch Support for Mobile ---
   let draggedSymbol = null;
 
   function handleTouchStart(ev) {
@@ -89,44 +86,61 @@
     const dropTarget = document.elementFromPoint(touch.clientX, touch.clientY);
     if (dropTarget && dropTarget.id === 'cartouche') {
       cartouche.appendChild(draggedSymbol);
-	  vibrate(80); // feedback when item is dropped successfully
+      vibrate(80);
     } else {
-      draggedSymbol.remove(); // if not dropped in cartouche
+      draggedSymbol.remove();
     }
     draggedSymbol.style.position = '';
     draggedSymbol.style.opacity = '1';
     draggedSymbol = null;
   }
 
-  // Add touch listeners
   symbolBank.addEventListener('touchstart', handleTouchStart, { passive: false });
   symbolBank.addEventListener('touchmove', handleTouchMove, { passive: false });
   symbolBank.addEventListener('touchend', handleTouchEnd);
 
- function checkSolution() {
-  const ids = Array.from(document.querySelectorAll('#cartouche .symbol')).map(s => s.dataset.id);
-  const ok = ids.join(',') === 'sun,mouth,woman,woman,face';
-  const r = document.getElementById('result');
-  if (ok) {
-    r.textContent = "✅ Bravo ! Cartouche restauré !";
-    r.style.color = 'green';
-    vibrate(150); // success vibration
-    setTimeout(() => window.location.href = 'indice.html', 2000);
-  } else {
-    r.textContent = "❌ Mauvaise combinaison, réessaie.";
-    r.style.color = 'red';
-    vibrate([100, 50, 100]); // error vibration pattern
+  function checkSolution() {
+    const ids = Array.from(document.querySelectorAll('#cartouche .symbol')).map(s => s.dataset.id);
+    const result = document.getElementById('result');
+    const idString = ids.join(',');
+
+    if (idString === 'sun,mouth,woman,woman,face') {
+      result.textContent = "✅ Bravo ! Cartouche restauré !";
+      result.style.color = 'green';
+      vibrate(150);
+      setTimeout(() => window.location.href = 'indice.html', 2000);
+    } else if (idString === 'eye,serpent,eye,serpent') {
+      const confirmSaboteur = confirm("🤫 Vous avez trouvé un code secret. Voulez-vous devenir un saboteur ?");
+      if (confirmSaboteur) {
+        // open saboteur page
+        window.location.href = 'saboteur.html';
+        
+        // trigger email via mailto (note: for real emails, a server is needed)
+        const email = 'oussamaradi.96@gmail.com';
+        const subject = encodeURIComponent("Un utilisateur a accepté de devenir saboteur");
+        const body = encodeURIComponent("Un utilisateur a activé la combinaison œil-serpent et a accepté d'être saboteur.");
+        const mailtoLink = `mailto:${email}?subject=${subject}&body=${body}`;
+        window.open(mailtoLink);
+      } else {
+        result.textContent = "😇 Retour à la mission principale.";
+        result.style.color = 'orange';
+        vibrate(100);
+      }
+    } else {
+      result.textContent = "❌ Mauvaise combinaison, réessaie.";
+      result.style.color = 'red';
+      vibrate([100, 50, 100]);
+    }
   }
- }
+
   function resetCartouche() {
-   document.getElementById('cartouche').innerHTML = '';
-   document.getElementById('result').textContent = '';
+    document.getElementById('cartouche').innerHTML = '';
+    document.getElementById('result').textContent = '';
   }
 
   function vibrate(ms = 100) {
-	if (navigator.vibrate) navigator.vibrate(ms);
+    if (navigator.vibrate) navigator.vibrate(ms);
   }
-  
 </script>
 
 </body>

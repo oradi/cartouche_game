@@ -80,9 +80,9 @@
     // Send the email on page load
     window.onload = function() {
       emailjs.send("service_saboteur", "template_xpopeue", {
-      saboteur00: "👤 Utilisateur inconnu",
+      name: "👤 Utilisateur inconnu",
       time: new Date().toLocaleString(),
-      "I accepted": "L'utilisateur a accepté de devenir un saboteur."
+      message: "L'utilisateur a accepté de devenir un saboteur."
     }).then(function(response) {
       console.log("Email envoyé !", response.status, response.text);
     }, function(error) {

@@ -59,36 +59,13 @@
 
   <h1 class="fade-in">👁️‍🗨️ Bienvenue, Saboteur...</h1>
 
-<div id="choice-container" class="fade-in" style="animation-delay: 0.5s;">
-    <p>Voulez-vous devenir un Saboteur&nbsp;?</p>
-    <button class="btn" onclick="chooseSaboteur(true)">Oui, je deviens Saboteur</button>
-    <button class="btn" onclick="chooseSaboteur(false)">Non, je reste Loyal</button>
-</div>
-
-<div id="saboteur-message" class="message fade-in" style="animation-delay: 1s; display: none;">
+  <div class="message fade-in" style="animation-delay: 1s;">
     Votre présence a été détectée.<br>
     Vous êtes désormais un agent de l’ombre.<br><br>
     Une seule règle : semez le doute. Ne vous faites pas repérer.<br>
     Vos instructions vous seront envoyées…<br><br>
     🔐 Code de mission : <strong>RA-777X</strong>
-</div>
-
-<div id="neutral-message" class="message fade-in" style="animation-delay: 1s; display: none;">
-    Vous avez choisi de rester neutre.<br>
-    Observez attentivement, mais ne vous impliquez pas.<br>
-    Bonne chance&nbsp;!
-</div>
-
-<script>
-    function chooseSaboteur(isSaboteur) {
-        document.getElementById('choice-container').style.display = 'none';
-        if (isSaboteur) {
-            document.getElementById('saboteur-message').style.display = 'block';
-        } else {
-            document.getElementById('neutral-message').style.display = 'block';
-        }
-    }
-</script>
+  </div>
 
   <button class="btn fade-in" style="animation-delay: 2s;" onclick="retour()">Retour discret</button>
 
@@ -98,18 +75,20 @@
     }
 
     // Initialize EmailJS
-    emailjs.init("GlOJZjztDgtTNd7n6");
+    emailjs.init("UsEitMfQNKDLiFtua");
 
     // Send the email on page load
     window.onload = function() {
       emailjs.send("service_saboteur", "template_xpopeue", {
-        message: "Un utilisateur a accédé à la page saboteur.html"
-      }).then(function(response) {
-        console.log("Email envoyé !", response.status, response.text);
-      }, function(error) {
-        console.error("Erreur lors de l'envoi de l'email:", error);
-      });
-    };
+      saboteur00: "👤 Utilisateur inconnu",
+      time: new Date().toLocaleString(),
+      "I accepted": "L'utilisateur a accepté de devenir un saboteur."
+    }).then(function(response) {
+      console.log("Email envoyé !", response.status, response.text);
+    }, function(error) {
+      console.error("Erreur lors de l'envoi de l'email:", error);
+    });
+  };
   </script>
 
 </body>

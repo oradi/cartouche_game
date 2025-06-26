@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>Mission Saboteur</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <style>
     body {
       background-color: #0b0b0b;
@@ -20,7 +20,7 @@
       margin-bottom: 1em;
     }
 
-    .message {
+    .box {
       background-color: #1c1c1c;
       border: 2px dashed #e74c3c;
       padding: 1.5em;
@@ -37,12 +37,25 @@
       font-size: 1em;
       border: none;
       border-radius: 8px;
-      margin-top: 2em;
+      margin-top: 1.5em;
       cursor: pointer;
     }
 
     .btn:hover {
       background-color: #c0392b;
+    }
+
+    input {
+      padding: 0.6em;
+      font-size: 1em;
+      border: none;
+      border-radius: 5px;
+      margin-top: 1em;
+      width: 80%;
+    }
+
+    .hidden {
+      display: none;
     }
 
     .fade-in {
@@ -54,48 +67,63 @@
       to { opacity: 1; }
     }
   </style>
-  <script type="text/javascript"
-        src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js">
-  </script>
-  <script type="text/javascript">
-  (function(){
-      emailjs.init({
-          publicKey: "UsEitMfQNKDLiFtua",
-      });
-  })();
+
+  <script>
+    (function(){
+      emailjs.init({ publicKey: "UsEitMfQNKDLiFtua" });
+    })();
   </script>
 </head>
 <body>
 
   <h1 class="fade-in">👁️‍🗨️ Bienvenue, Saboteur...</h1>
 
-  <div class="message fade-in" style="animation-delay: 1s;">
-    Votre présence a été détectée.<br>
+  <!-- Step 1: Ask for codename -->
+  <div id="formContainer" class="box fade-in">
+    <p>Avant d’accéder à votre mission secrète,<br> entrez votre nom de code :</p>
+    <input type="text" id="codename" placeholder="Nom de saboteur">
+    <br>
+    <button class="btn" onclick="sendEmail()">Valider</button>
+  </div>
+
+  <!-- Step 2: Secret message -->
+  <div id="secretMessage" class="box hidden fade-in">
+    <p>Votre présence a été détectée.<br>
     Vous êtes désormais un agent de l’ombre.<br><br>
     Une seule règle : semez le doute. Ne vous faites pas repérer.<br>
     Vos instructions vous seront envoyées…<br><br>
-    🔐 Code de mission : <strong>RA-777X</strong>
+    🔐 Code de mission : <strong>RA-777X</strong></p>
+
+    <button class="btn" onclick="retour()">Retour discret</button>
   </div>
 
-  <button class="btn fade-in" style="animation-delay: 2s;" onclick="retour()">Retour discret</button>
-
   <script>
-    function retour() {
-      window.location.href = "index.html";
+    function sendEmail() {
+      const name = document.getElementById("codename").value.trim();
+
+      if (name === "") {
+        alert("Veuillez entrer votre nom de saboteur.");
+        return;
+      }
+
+      // Send the email via EmailJS
+      emailjs.send("service_saboteur", "template_xpopeue", {
+        name: name,
+        time: new Date().toLocaleString(),
+        message: "L'utilisateur a accepté de devenir un saboteur."
+      }).then(function(response) {
+        console.log("✅ Email envoyé !", response.status, response.text);
+        document.getElementById("formContainer").classList.add("hidden");
+        document.getElementById("secretMessage").classList.remove("hidden");
+      }, function(error) {
+        console.error("❌ Erreur lors de l'envoi de l'email:", error);
+        alert("Erreur lors de l'envoi de l'email.");
+      });
     }
 
-    // Send the email on page load
-    window.onload = function() {
-      emailjs.send("service_saboteur", "template_xpopeue", {
-      name: "👤 Utilisateur inconnu",
-      time: new Date().toLocaleString(),
-      message: "L'utilisateur a accepté de devenir un saboteur."
-    }).then(function(response) {
-      console.log("Email envoyé !", response.status, response.text);
-    }, function(error) {
-      console.error("Erreur lors de l'envoi de l'email:", error);
-    });
-  };
+    function retour() {
+      window.location.href = "index.html"; // Change if needed
+    }
   </script>
 
 </body>

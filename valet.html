@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Valet Détecté</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <style>
+    body {
+      background-color: #330000;
+      color: #f0f0f0;
+      font-family: 'Courier New', monospace;
+      text-align: center;
+      padding: 2em;
+    }
+
+    h1 {
+      font-size: 2em;
+      color: #e74c3c;
+      margin-bottom: 1em;
+    }
+
+    .box {
+      background-color: #550000;
+      border: 2px dashed #e74c3c;
+      padding: 1.5em;
+      margin: 1em auto;
+      max-width: 600px;
+      border-radius: 10px;
+      font-size: 1.1em;
+    }
+
+    input {
+      padding: 0.6em;
+      font-size: 1em;
+      border: none;
+      border-radius: 5px;
+      margin-top: 1em;
+      width: 80%;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .btn {
+      background-color: #e74c3c;
+      color: white;
+      padding: 0.8em 1.5em;
+      font-size: 1em;
+      border: none;
+      border-radius: 8px;
+      margin-top: 1.5em;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      background-color: #c0392b;
+    }
+
+    .fade-in {
+      animation: fadeIn 1.5s ease-in-out forwards;
+      opacity: 0;
+    }
+
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+  </style>
+
+  <script>
+    (function(){
+      emailjs.init({ publicKey: "UsEitMfQNKDLiFtua" });
+    })();
+
+    function sendSaboteurMail() {
+      const email = document.getElementById("saboteurEmail").value.trim();
+      const name = document.getElementById("valetName").value.trim();
+
+      if (email === "" || name === "") {
+        alert("Veuillez entrer votre nom et votre email.");
+        return;
+      }
+
+      emailjs.send("service_saboteur", "template_valet_detecte", {
+        email: email,
+        name: name,
+        message: `Bonjour ${name}, vous serez averti si un saboteur est identifié.`
+      }).then(function(response) {
+        console.log("✅ Email envoyé au valet:", response.status, response.text);
+        document.getElementById("subscribeBox").innerHTML = `<p>✅ Merci ${name}, vous serez notifié si un saboteur est identifié.<br>Restez sur vos gardes...</p>`;
+      }, function(error) {
+        console.error("❌ Erreur lors de l'envoi de l'email valet:", error);
+        alert("Erreur lors de l'envoi.");
+      });
+    }
+  </script>
+</head>
+<body>
+
+  <h1 class="fade-in">🚩 Valet détecté !</h1>
+
+  <div class="box fade-in">
+    <p>L’information cruciale que détenait le <strong>Roi couronné</strong> :</p>
+    <p><em>« L’endroit où se trouvait la première clé ».</em></p>
+  </div>
+
+  <div id="subscribeBox" class="box fade-in">
+    <p>Il est possible qu’un <strong>saboteur</strong> soit en liberté...<br>
+    Souhaitez-vous être averti s’il est confirmé ?</p>
+    <input type="text" id="valetName" placeholder="Votre nom" required>
+    <input type="email" id="saboteurEmail" placeholder="votre.email@exemple.com" required>
+    <button class="btn" onclick="sendSaboteurMail()">Être alerté</button>
+  </div>
+
+</body>
+</html>
